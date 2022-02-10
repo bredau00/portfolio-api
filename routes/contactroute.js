@@ -1,9 +1,40 @@
-const express = require('express');
-const router = express.Router();
+const express = require("express");
+const nodemailer = require("nodemailer");
+const app = express.Router();
+require("dotenv").config();
 
+app.get("/", (req, res) => res.send({ msg: "Send contact using POST" }));
 
-router.get('/', (res, req) => res.send({
-    msg: "send conatct"
-}))
+app.post("/", (req, res) => {
+    const { name, email, message } = req.body;
+    const transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true,
+    service: "gmail",
+    auth: {
+    user: process.env.EMAIL,
+    pass: process.env.PASS
+    },
+});
 
-module.exports = router;
+const mailOptions = {
+    from: email,
+    to: "ubaidbreda@gmail.com",
+    subject: "New message from portfolio",
+    text: `${name} has messaged you, saying:
+    ${message}`,
+};
+
+transporter.sendMail(mailOptions, function (error, info) {
+    if (error) {
+    console.log(error);
+    res.status(400).send({ msg: "Email could not be sent " + error });
+    } else {
+    console.log("Email sent: " + info.response);
+    res.send({ msg: "Message sent successfully" });
+    }
+    });
+});
+
+module.exports = app;

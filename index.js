@@ -16,7 +16,7 @@ app.get('/', (req, res, next) =>{
 })
 app.use('/projects', projectroute)
 
-app.use('/projects', contactroute)
+app.use('/contact', contactroute)
 
 
 
